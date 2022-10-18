@@ -2,7 +2,10 @@ const express = require("express");
 const mongoose = require("mongoose");
 const morgan = require("morgan");
 const methodOverride = require("method-override");
-require("dotenv").config();
+const session = require('express-session')
+const MongoStore = require('connect-mongo')
+require("dotenv").config()
+
 
 const app = express();
 const PORT = 8000;
@@ -12,6 +15,12 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride("_method"));
+app.use(session({
+  secret: process.env.SECRET,
+  store: MongoStore.create({mongoUrl: process.env.MONGO_URI}),
+  resave: false,
+  saveUninitialized: true
+}))
 
 // app setting
 app.set("view engine", "jsx");

@@ -1,7 +1,6 @@
 const express = require("express");
-const userModel = require("../models/userSchema");
-
-
+const UserModel = require("../models/userSchema");
+const bcrypt = require("bcryptjs");
 
 const router = express.Router();
 
@@ -15,7 +14,11 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.get("/signup", (req, res) => {
+  res.render("Users/Signup");
+});
+
+router.post("/signup", async (req, res) => {
   try {
     // check if user exist
     const userAlreadyExist = await UserModel.find({ email: req.body.email });
@@ -26,47 +29,90 @@ router.post("/", async (req, res) => {
     }
 
     // Create a new user
+    const SALT = await bcrypt.genSalt(10); // How secure your hash will beS
+    // re-assign the password to the hash password
+    req.body.password = await bcrypt.hash(req.body.password, SALT);
     const user = await UserModel.create(req.body);
-    res.send(user);
+    res.redirect("/user/signin");
   } catch (error) {
     console.log(error);
     res.status(403).send("Cannot POST");
   }
 });
 
+// Render the sign in Form
+router.get("/signin", (req, res) => {
+  res.render("Users/Signin");
+});
+
+// Sign in a user
+router.post("/signin", async (req, res) => {
+  try {
+    // find user by email in db
+    const user = await UserModel.findOne({ email: req.body.email });
+    if (!user) return res.send("Please check your email and password!");
+    // checks if passwords match
+    const decodedPassword = await bcrypt.compare(
+      req.body.password,
+      user.password
+    );
+    if (!decodedPassword)
+      return res.send("Please check your email and password!");
+     // set the user session
+     // create a new username in the session obj using the user info from DB
+     req.session.username = user.username
+     req.session.loggedIn = true
+
+    // redirect to /blogs
+    res.redirect("/blog");
+  } catch (error) {}
+});
+
+// sign out the user and destroy session 
+router.get('/signout', (req, res)=>{
+try {
+  req.session.destroy()
+  res.redirect('/')
+} catch (error) {
+  console.log(error);
+}
+})
 
 // Find user by id
-router.get('/:id', async(req, res) => {
-    try {
-        const user = await UserModel.findById(req.params.id)
-        res.send(user)
-    } catch (error) {
-        console.log(error);
-        res.status(403).send("Cannot GET user by id");
-      }
-    
-})
+router.get("/:id", async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.params.id);
+    res.send(user);
+  } catch (error) {
+    console.log(error);
+    res.status(403).send("Cannot GET user by id");
+  }
+});
 
 // PUT update a user
-router.put('/:id', async (req, res) => {
-    try {
-        const updatedUser = await UserModel.findByIdAndUpdate(req.params.id, req.body,  {'returnDocument' :"after"})
-        res.send(updatedUser)
-    } catch (error) {
-        console.log(error);
-        res.status(403).send("Cannot PUT user by id");
-    }
-})
+router.put("/:id", async (req, res) => {
+  try {
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { returnDocument: "after" }
+    );
+    res.send(updatedUser);
+  } catch (error) {
+    console.log(error);
+    res.status(403).send("Cannot PUT user by id");
+  }
+});
 
 // Delete user
-router.delete('/:id', async (req, res) => {
-    try {
-        const deletedUser = await UserModel.findByIdAndRemove(req.params.id)
-        res.send(deletedUser)
-    } catch (error) {
-        console.log(error);
-        res.status(403).send("Cannot DELETE user by id");
-    }
-})
+router.delete("/:id", async (req, res) => {
+  try {
+    const deletedUser = await UserModel.findByIdAndRemove(req.params.id);
+    res.send(deletedUser);
+  } catch (error) {
+    console.log(error);
+    res.status(403).send("Cannot DELETE user by id");
+  }
+});
 
 module.exports = router;

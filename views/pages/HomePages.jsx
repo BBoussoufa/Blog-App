@@ -16,7 +16,7 @@ class HomePage extends React.Component {
 
               <h1>Welcome to my Blog App</h1>
 
-              <img src="/Images/BlogImg.png" />
+              
         </div>
         );
     }

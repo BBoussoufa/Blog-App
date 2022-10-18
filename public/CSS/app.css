@@ -1,10 +1,18 @@
 @import url('https://fonts.googleapis.com/css?family=Comfortaa%7CRighteous');
 
-body {
+/* body {
   background: url(https://images.clipartlogo.com/files/istock/previews/8741/87414357-apple-seamless-pastel-colors-pattern-fruits-texture-background.jpg);
   margin: 0;
   font-family: 'Comfortaa', cursive;
+} */
+
+
+body {
+  background: url(https://knilt.arcc.albany.edu/images/0/0f/Aablog.jpg);
+ margin: 0;
+  font-family: 'Comfortaa', cursive;
 }
+
 
 
 h1 {
