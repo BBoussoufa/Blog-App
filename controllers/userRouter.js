@@ -14,6 +14,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Render a Signup Form
 router.get("/signup", (req, res) => {
   res.render("Users/Signup");
 });
@@ -29,8 +30,8 @@ router.post("/signup", async (req, res) => {
     }
 
     // Create a new user
-    const SALT = await bcrypt.genSalt(10); // How secure your hash will beS
-    // re-assign the password to the hash password
+    const SALT = await bcrypt.genSalt(10); // how secure your hash will be
+    // re-assign the password to the hashed password
     req.body.password = await bcrypt.hash(req.body.password, SALT);
     const user = await UserModel.create(req.body);
     res.redirect("/user/signin");
@@ -40,12 +41,12 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-// Render the sign in Form
+// Render the Signin Form
 router.get("/signin", (req, res) => {
   res.render("Users/Signin");
 });
 
-// Sign in a user
+// Signin an User
 router.post("/signin", async (req, res) => {
   try {
     // find user by email in db
@@ -58,25 +59,26 @@ router.post("/signin", async (req, res) => {
     );
     if (!decodedPassword)
       return res.send("Please check your email and password!");
-     // set the user session
-     // create a new username in the session obj using the user info from DB
-     req.session.username = user.username
-     req.session.loggedIn = true
-
+    // set the user session
+    // create a new username in the session obj using the user info from db
+    req.session.username = user.username;
+    req.session.loggedIn = true;
     // redirect to /blogs
     res.redirect("/blog");
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 });
 
-// sign out the user and destroy session 
-router.get('/signout', (req, res)=>{
-try {
-  req.session.destroy()
-  res.redirect('/')
-} catch (error) {
-  console.log(error);
-}
-})
+// Signout User and destroy session
+router.get("/signout", (req, res) => {
+  try {
+    req.session.destroy();
+    res.redirect("/");
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 // Find user by id
 router.get("/:id", async (req, res) => {

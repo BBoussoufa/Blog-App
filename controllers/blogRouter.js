@@ -3,31 +3,59 @@ const BlogModel = require("../models/BlogSchema");
 
 const router = express.Router();
 
-// add privacy to this routes
-// middleware function
- router.use((req, res, next) => {
- if (req.session.loggedIn){
-  next()
- }else{
-  res.redirect('/user/signin')
- }
- })
+// Add Privacy to this router or routes
+// Middleware function
+router.use((req, res, next) => {
+  if (req.session.loggedIn) {
+    next();
+  } else {
+    res.redirect("/user/signin");
+  }
+});
 
-// Get All Blogs
+// GET: All Blogs
 router.get("/", async (req, res) => {
   try {
     const blogs = await BlogModel.find({});
-    res.render("Blogs/Blogs", { blogs: blogs });
+    res.render("Blogs/Blogs", {
+      blogs: blogs,
+      loggedInUser: req.session.username,
+    });
   } catch (error) {
     console.log(error);
     res.status(403).send("Cannot get");
   }
 });
+
+// Create Blog Form
 router.get("/new", (req, res) => {
-  res.render("Blogs/New");
+  try {
+    res.render("Blogs/CreateBlog");
+  } catch (error) {
+    console.log(error);
+    res.status(403).send("Not found");
+  }
 });
 
-// Get Blog By Id
+// POST: CREATE a New Blog
+router.post("/", async (req, res) => {
+  try {
+    if (req.body.sponsored === "on") {
+      req.body.sponsored = true;
+    } else {
+      req.body.sponsored = false;
+    }
+    // set the author to the loggedIn user
+    req.body.author = req.session.username;
+    const newBlog = await BlogModel.create(req.body);
+    res.redirect("/blog");
+  } catch (error) {
+    console.log(error);
+    res.status(403).send("Cannot create");
+  }
+});
+
+// GET: Blog by ID
 router.get("/:id", async (req, res) => {
   try {
     const blog = await BlogModel.findById(req.params.id);
@@ -46,20 +74,6 @@ router.get("/:id/edit", async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(403).send("Cannot get");
-  }
-});
-
-// Create A New Blog
-router.post("/", async (req, res) => {
-  try {
-    
-    // set the author to the loggedIn user
-    req.body.author = req.session.username
-    const newBlog = await BlogModel.create(req.body);
-    res.redirect("/blog");
-  } catch (error) {
-    console.log(error);
-    res.status(403).send("Cannot Create");
   }
 });
 
@@ -83,7 +97,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// Delete
+// DELETE
 router.delete("/:id", async (req, res) => {
   try {
     const deletedBlog = await BlogModel.findByIdAndRemove(req.params.id);
@@ -91,7 +105,7 @@ router.delete("/:id", async (req, res) => {
     res.redirect("/blog");
   } catch (error) {
     console.log(error);
-    res.status(403).send("cannot delete");
+    res.status(403).send("Cannot put");
   }
 });
 
