@@ -3,7 +3,7 @@ const Navbar = require('../components/Navbar')
 
 class Blogs extends React.Component {
   render() {
-    const { blogs, loggedInUser } = this.props;
+    const { blogs, loggedInUser } = this.props
     console.log(loggedInUser);
     return (
       <div>
@@ -11,7 +11,7 @@ class Blogs extends React.Component {
           <link rel="stylesheet" href="/CSS/main.css" />
         </head>
 
-        <Navbar />
+        <Navbar/>
         
         <h1>Blogs</h1>
 
