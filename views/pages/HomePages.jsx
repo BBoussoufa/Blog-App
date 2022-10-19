@@ -7,7 +7,7 @@ class HomePage extends React.Component {
         <div>
 
             <head>
-            <link rel="stylesheet" href="/CSS/main.css"/>  
+            <link rel="stylesheet" href="/CSS/app.css"/>  
             </head>  
 
             <Navbar/>    
