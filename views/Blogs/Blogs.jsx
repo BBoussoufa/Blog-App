@@ -8,7 +8,7 @@ class Blogs extends React.Component {
     return (
       <div>
         <head>
-          <link rel="stylesheet" href="/CSS/main.css" />
+          <link rel="stylesheet" href="/CSS/app.css" />
         </head>
 
         <Navbar/>
