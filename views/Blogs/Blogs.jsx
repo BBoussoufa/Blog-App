@@ -15,7 +15,7 @@ class Blogs extends React.Component {
         
         <h1>Blogs</h1>
 
-        <section >
+        <section style={styles.container}>
           {blogs.map((blog) => (
             <div>
               <a href={`/blog/${blog._id}`}>
@@ -39,4 +39,13 @@ class Blogs extends React.Component {
     );
   }
 }
+const styles = {
+  container: {
+    backgroundColor:'#CEE5D0',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center'
+  }
+
+  }
 module.exports = Blogs

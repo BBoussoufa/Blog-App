@@ -35,8 +35,8 @@ container: {
 
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'space-between',
-  
+  justifyContent: 'space-between'
+
 }
 }
 
